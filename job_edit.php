@@ -3,56 +3,64 @@ session_start();
 include("db.php");
 include("header.php");
 
+// 檢查管理員身分
 if (!isset($_SESSION['user']['role']) || $_SESSION['user']['role'] !== 'M') {
     die("❌ 權限不足，只有管理員可以修改職缺。");
 }
 
-if (!isset($_GET['id']) || empty($_GET['id'])) {
+// 取得職缺 ID
+$postid = $_GET["postid"] ?? "";
+if (!$postid) {
     die("❌ 缺少職缺 ID。");
 }
 
-$id = intval($_GET['id']);
+// 如果按下送出（POST），執行更新
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $company = $_POST["company"];
+    $content = $_POST["content"];
 
-$stmt = $conn->prepare("SELECT company, content, pdate FROM job WHERE postid = ?");
-$stmt->bind_param("i", $id);
-$stmt->execute();
-$result = $stmt->get_result();
+    $sql = "UPDATE job SET company=?, content=? WHERE postid=?";
+    $stmt = mysqli_stmt_init($conn);
+    mysqli_stmt_prepare($stmt, $sql);
+    mysqli_stmt_bind_param($stmt, "ssi", $company, $content, $postid);
+    $result = mysqli_stmt_execute($stmt);
 
-if ($result->num_rows === 0) {
-    die("❌ 找不到該職缺資料。");
+    if ($result) {
+        mysqli_close($conn);
+        header("Location: job.php");
+        exit;
+    } else {
+        echo "<p class='text-danger'>❌ 更新失敗：" . mysqli_error($conn) . "</p>";
+    }
 }
 
-$row = $result->fetch_assoc();
-$company = htmlspecialchars($row['company']);
-$content = htmlspecialchars($row['content']);
-$pdate = htmlspecialchars($row['pdate']);
-
-$stmt->close();
+// 否則（第一次載入）從資料庫撈資料
+$sql = "SELECT * FROM job WHERE postid=?";
+$stmt = mysqli_stmt_init($conn);
+mysqli_stmt_prepare($stmt, $sql);
+mysqli_stmt_bind_param($stmt, "i", $postid);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$row = mysqli_fetch_assoc($result);
 ?>
 
 <div class="container mt-4">
-  <h3>修改職缺</h3>
-  <form action="job_update.php" method="post">
-    <input type="hidden" name="id" value="<?=$id?>">
-    
+  <h3 class="mb-3">修改職缺資料</h3>
+
+  <form action="job_edit.php?postid=<?= $postid ?>" method="post">
     <div class="mb-3">
       <label class="form-label">求才廠商：</label>
-      <input type="text" name="company" class="form-control" 
-             value="<?=$company?>" required>
+      <input type="text" name="company" class="form-control"
+             value="<?= htmlspecialchars($row['company']) ?>" required>
     </div>
 
     <div class="mb-3">
       <label class="form-label">職缺內容：</label>
-      <textarea name="content" class="form-control" rows="8" required><?=$content?></textarea>
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label">刊登日期：</label>
-      <input type="date" name="pdate" class="form-control" 
-             value="<?=$pdate?>" required>
+      <textarea name="content" class="form-control" rows="5" required><?= htmlspecialchars($row['content']) ?></textarea>
     </div>
 
     <input type="submit" value="更新職缺" class="btn btn-primary">
+    <a href="job.php" class="btn btn-secondary">取消</a>
   </form>
 </div>
 
