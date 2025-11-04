@@ -31,8 +31,9 @@ if (!$result) {
           <h5 class="card-title"><?= htmlspecialchars($row['name']) ?></h5>
           <p class="card-text"><?= htmlspecialchars($row['description']) ?></p>
 
-          <!-- 管理員才顯示刪除按鈕 -->
+          <!-- 管理員才顯示編輯 & 刪除按鈕 -->
           <?php if (isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'M'): ?>
+            <a href="event_edit.php?eventid=<?= $row['id'] ?>" class="btn btn-warning btn-sm me-1">編輯活動</a>
             <a href="event_delete.php?id=<?= $row['id'] ?>" class="btn btn-danger btn-sm"
                onclick="return confirm('確定要刪除這個活動嗎？');">刪除活動</a>
           <?php endif; ?>

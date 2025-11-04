@@ -59,7 +59,8 @@ if (!$result) {
           <td><?= htmlspecialchars($row["pdate"]) ?></td>
           <?php if (isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'M'): ?>
             <td>
-              <a href="job_edit.php?id=<?= $row['postid'] ?>" class="btn btn-warning btn-sm me-1">修改</a>
+              <!-- 修改按鈕改為使用 postid -->
+              <a href="job_edit.php?postid=<?= $row['postid'] ?>" class="btn btn-warning btn-sm me-1">修改</a>
               <a href="job_delete.php?id=<?= $row['postid'] ?>" class="btn btn-danger btn-sm"
                  onclick="return confirm('確定要刪除這個職缺嗎？');">刪除</a>
             </td>
