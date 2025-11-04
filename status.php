@@ -8,7 +8,6 @@ if (!isset($_SESSION["user"])) {
 include("header.php");
 include("db.php");
 
-// 抓最新的「迎新茶會」活動 ID
 $eventid = 0;
 $sql = "SELECT id FROM event WHERE name='迎新茶會' ORDER BY id DESC LIMIT 1";
 $res = $conn->query($sql);
@@ -22,7 +21,7 @@ $conn->close();
 <h3>迎新茶會報名</h3>
 
 <form method="post" action="success.php">
-  <input type="hidden" name="eventid" value="<?= $eventid ?>"> <!-- 活動 ID -->
+  <input type="hidden" name="eventid" value="<?= $eventid ?>"> 
 
   <p>姓名：<?= htmlspecialchars($_SESSION["user"]["name"]) ?></p>
   <p>身分：
@@ -43,7 +42,6 @@ $conn->close();
   </div>
 
   <?php
-  // 收費判斷
   if ($_SESSION["user"]["role"] == "T" || $_SESSION["user"]["role"] == "M") {
       echo "<p>老師/管理員免費參加。</p>";
   } else {

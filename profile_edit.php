@@ -4,7 +4,7 @@ include("db.php");
 include("header.php"); 
 
 if (!isset($_SESSION['user'])) {
-    die("❌ 請先登入！");
+    die("請先登入");
 }
 
 $account = $_SESSION['user']['account'];

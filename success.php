@@ -19,7 +19,6 @@ $sessions_str = "";
 $dinner = "";
 $eventid = 0;
 
-// 取消報名
 if (isset($_GET['cancel']) && is_numeric($_GET['cancel'])) {
     $eventid = (int)$_GET['cancel'];
     $sql_delete = "DELETE FROM registration WHERE userid=? AND eventid=?";
@@ -32,18 +31,16 @@ if (isset($_GET['cancel']) && is_numeric($_GET['cancel'])) {
     }
 }
 
-// 新增報名
 if (!empty($_POST)) {
     $eventid = (int)$_POST['eventid'];
 
-    // 活動分類
-    if (isset($_POST['dinner'])) { // 迎新茶會
+    if (isset($_POST['dinner'])) { 
         $activity = "迎新茶會";
         $dinner = $_POST['dinner'];
         $detail = "晚餐：" . $dinner;
         if ($role === "S" && $dinner === "需要") $fee = 60;
 
-    } elseif (isset($_POST['session'])) { // 資管一日營
+    } elseif (isset($_POST['session'])) { 
         $activity = "資管一日營";
         $sessions = $_POST['session'];
         $sessions_str = implode("、", $sessions);
@@ -59,7 +56,6 @@ if (!empty($_POST)) {
         }
     }
 
-    // 檢查是否已報名
     $sql_check = "SELECT * FROM registration WHERE userid=? AND eventid=?";
     $stmt_check = mysqli_stmt_init($conn);
     if (mysqli_stmt_prepare($stmt_check, $sql_check)) {
@@ -83,7 +79,6 @@ if (!empty($_POST)) {
     }
 }
 
-// 顯示報名資訊
 echo "<h3>報名資訊</h3>";
 echo "<ul>";
 echo "<li>姓名：" . htmlspecialchars($_SESSION["user"]["name"]) . "</li>";
@@ -94,7 +89,6 @@ if (!empty($activity)) {
     echo "<li>{$detail}</li>";
     echo "<li>應繳費用：{$fee} 元</li>";
 
-    // 顯示取消報名按鈕
     $sql_check2 = "SELECT * FROM registration WHERE userid=? AND eventid=?";
     $stmt_check2 = mysqli_stmt_init($conn);
     if (mysqli_stmt_prepare($stmt_check2, $sql_check2)) {
