@@ -3,18 +3,17 @@ session_start();
 include("db.php");
 include("header.php");
 
-// 管理員才可以編輯
+
 if (!isset($_SESSION['user']['role']) || $_SESSION['user']['role'] !== 'M') {
     die("❌ 權限不足，只有管理員可以修改活動。");
 }
 
-// 取得活動 ID
+
 $eventid = $_GET['eventid'] ?? '';
 if (!$eventid) {
     die("❌ 缺少活動 ID。");
 }
 
-// 表單送出後執行更新
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $name = $_POST['name'];
     $description = $_POST['description'];
@@ -27,14 +26,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if ($result) {
         mysqli_close($conn);
-        header("Location: event.php");
+        header("Location: /web/index.php");
         exit;
     } else {
         echo "<p class='text-danger'>❌ 更新失敗：" . mysqli_error($conn) . "</p>";
     }
 }
 
-// 第一次載入表單，抓出資料
 $sql = "SELECT * FROM event WHERE id=?";
 $stmt = mysqli_stmt_init($conn);
 mysqli_stmt_prepare($stmt, $sql);
@@ -56,7 +54,7 @@ $event = mysqli_fetch_assoc($result);
       <textarea name="description" class="form-control" rows="5" required><?= htmlspecialchars($event['description']) ?></textarea>
     </div>
     <input type="submit" class="btn btn-primary" value="更新活動">
-    <a href="event.php" class="btn btn-secondary">取消</a>
+    <a href="/web/index.php" class="btn btn-secondary">取消</a>
   </form>
 </div>
 

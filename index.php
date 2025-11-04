@@ -16,7 +16,7 @@ if (!$result) {
 <!-- 管理員才顯示新增活動按鈕 -->
 <?php if (isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'M'): ?>
   <div class="mb-3">
-    <a href="event_add.php" class="btn btn-success">➕ 新增活動</a>
+    <a href="/web/event_add.php" class="btn btn-success">➕ 新增活動</a>
   </div>
 <?php endif; ?>
 
@@ -33,8 +33,8 @@ if (!$result) {
 
           <!-- 管理員才顯示編輯 & 刪除按鈕 -->
           <?php if (isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'M'): ?>
-            <a href="event_edit.php?eventid=<?= $row['id'] ?>" class="btn btn-warning btn-sm me-1">編輯活動</a>
-            <a href="event_delete.php?id=<?= $row['id'] ?>" class="btn btn-danger btn-sm"
+            <a href="/web/event_edit.php?eventid=<?= $row['id'] ?>" class="btn btn-warning btn-sm me-1">編輯活動</a>
+            <a href="/web/event_delete.php?id=<?= $row['id'] ?>" class="btn btn-danger btn-sm"
                onclick="return confirm('確定要刪除這個活動嗎？');">刪除活動</a>
           <?php endif; ?>
         </div>
